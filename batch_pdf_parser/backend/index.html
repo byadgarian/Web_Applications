@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <title>Batch PDF Parser</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"></link>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <!---------------------------------------------------------------------->
+    <!---------- NAVIGATION BAR -------------------------------------------->
+    <!---------------------------------------------------------------------->
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand mb-0 h1" href="index.html">
+          <img src="assets/brand/data_1.png" width="35" height="35">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar_munu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar_munu">
+          <div class="navbar-nav">
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">
+                Help
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#quick_ins_popup">Quick Instructions</a>
+                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#regex_help_popup">RegEx Help Tables</a>
+              </div>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link active" href="#" data-bs-toggle="modal" data-bs-target="#about_popup">About</a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link active" href="#" data-bs-toggle="modal" data-bs-target="#contact_popup">Contact Us</a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#profile_popup">Profile</a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link active" href="#" id="logout">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="width:95%">
+      <!---------------------------------------------------------------------->
+      <!---------- TOP CONTAINER --------------------------------------------->
+      <!---------------------------------------------------------------------->
+      <!--- Title --->
+      <br>
+      <div class="row" style="text-align:center">
+        <h3 style="color:gray">BATCH PDF PARSER</h3>
+      </div>
+      <br><br>
+
+      <div class="row g-5">
+        <!--- Single File Upload --->
+        <div class="col-xs-12 col-lg-4">
+          <input type="file" style="display:none" id="single_pdf_file" name="single_pdf_file" accept=".pdf" required="true">
+          <label for="single_pdf_file" class="mb-2 btn btn-secondary btn-md"  >Choose Sample PDF File</label>
+          <button class="mb-2 btn btn-primary btn-md" type="button" id="sample_upload_btn" value="Upload">Upload</button>
+          <br>
+          Selected File:
+          <span id="pdf_name">None</span>
+          <br><br>
+          <div id="upload_alert"></div>
+          <button class="mb-2 btn btn-primary" type="button" id="get_pdf_content_btn" data-bs-toggle="modal" data-bs-target="#raw_content_popup">View Raw Content</button>
+        </div>
+
+        <div class="col-xs-12 col-lg-8">
+          <div class="row g-5">
+
+            <!--- Template Selector and Manager --->
+            <div class="col-xs-12 col-lg-6">
+              <div class="form-group">
+                <div class="form-floating">
+                  <select class="form-select" id="template_name_1" name="template_name_1">
+                    <option value=""></option>
+                  </select>
+                  <label for="template_name_1">Select a template</label>
+                </div>
+              </div>
+              <br>
+              <button class="mb-2 btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#template_popup">Add or Edit Templates</button>
+              <div id="database_alert_1"></div>
+            </div>
+
+            <!--- Rule Selector --->
+            <div class="col-xs-12 col-lg-6">
+              <div class="form-group">
+                <div class="form-floating">
+                  <select class="form-select" id="rule_name" name="rule_name">
+                    <option value=""></option>
+                  </select>
+                  <label id="rule_list_label" for="rule_name">Select a rule (select a template to see rules)</label>
+                </div>
+              </div>
+              <br><br>
+              <div id="database_alert_1_2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--- Devider --->
+      <br>
+      <div class="row">
+        <hr></hr>
+      </div>
+      <!-- <br> -->
+
+      <!---------------------------------------------------------------------->
+      <!---------- MIDDLE CONTAINER ------------------------------------------>
+      <!---------------------------------------------------------------------->
+      <form id="parsing_rules_form">
+        <div class="row g-5">
+          <div class="col-xs-12 col-lg-8">
+            <div class="row g-5">
+
+              <!--- Rule Name --->
+              <div class="col-xs-12 col-lg-6">
+                <div class="form-group">
+                  <div style="text-align:center;">
+                    <h4 style="color:gray">Rule Name</h4>
+                  </div>
+                  <br>
+                  <div class="form-floating">
+                    <input class="form-control" id="new_rule_name" name="new_rule_name" placeholder="Rule Name" maxlengtdh="64" size="10">
+                    <label for="new_rule_name">Rule Name</label>
+                  </div>
+                  <br>
+                  <div class="form-floating">
+                    <input class="form-control" id="csv_column_name" name="csv_column_name" placeholder="CSV Column Name" maxlength="64" size="10">
+                    <label for="csv_column_name">CSV Column Name</label>
+                  </div>
+                </div>
+              </div>
+
+              <!--- Target String Location --->
+              <div class="col-xs-12 col-lg-6">
+                <div style="text-align:center;">
+                  <h4 style="color:gray">Target String Location</h4>
+                </div>
+                <br>
+                <div class="form-group">
+                  <div class="form-floating">
+                    <select class="form-select" id="location" name="location">
+                      <option value=""></option>
+                      <option value="0">Entire Document</option>
+                      <option value="1">After a Keyword</option>
+                      <option value="2">Before a Keyword</option>
+                    </select>
+                    <label for="location">Select Location</label>
+                  </div>
+                </div>
+                <br>
+                <div class="form-floating">
+                  <input class="form-control" type="text" id="keyword" name="keyword" placeholder="Keyword" readonly="" maxlength="64" size="10">
+                  <label for="keyword">Keyword</label>
+                </div>
+                <br>
+                <div class="form-group">
+                  <div class="form-floating">
+                    <select class="form-select" id="keyword_occurrence" name="keyword_occurrence" disabled="">
+                      <option value=""></option>
+                      <option value="1">1st Occurrence</option>
+                      <option value="2">2nd Occurrence</option>
+                      <option value="3">3rd Occurrence</option>
+                      <option value="4">4th Occurrence</option>
+                      <option value="5">5th Occurrence</option>
+                    </select>
+                    <label for="occurrence">Select Keyword Occurrence</label>
+                  </div>
+                </div>
+                <br>
+                <div class="form-group">
+                  <div class="form-floating">
+                    <select class="form-select" id="string_occurrence" name="string_occurrence">
+                      <option value=""></option>
+                      <option value="1">1st Occurrence</option>
+                      <option value="2">2nd Occurrence</option>
+                      <option value="3">3rd Occurrence</option>
+                      <option value="4">4th Occurrence</option>
+                      <option value="5">5th Occurrence</option>
+                      <option value="0">Last Occurrence</option>
+                      <option value="-1">2nd Before Last Occurrence</option>
+                      <option value="-2">3rd Before Last Occurrence</option>
+                      <option value="-3">4th Before Last Occurrence</option>
+                      <option value="-4">5th Before Last Occurrence</option>
+                    </select>
+                    <label for="occurrence">Select Target String Occurrence</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--- Target String Formats --->
+          <div class="col-xs-12 col-lg-4">
+            <div style="text-align:center;">
+              <h4 style="color:gray">Target String Formats</h4>
+            </div>
+            <br>
+            <div class="form-floating">
+              <input class="form-control" type="text" id="string_formats" name="string_formats" placeholder="String Formats" maxlength="64" size="7">
+              <label for="string_formats">String Formats</label>
+            </div>
+            <br>
+            <div class="form-group">
+              <div class="form-floating">
+                <select class="form-select" id="char">
+                  <option value=""></option>
+                  <option value="Custom Phrase">Custom Phrase (e.g., Annual Sample)</option>
+                  <option value="Any Character">Any Character</option>
+                  <option value="Any Letter">Any Letter</option>
+                  <option value="Any Upper Case Letter">Any Upper Case Letter</option>
+                  <option value="Any Lower Case Letter">Any Lower Case Letter</option>
+                  <!-- <option value="Custom Letter Set">Custom Letter Set (e.g, A c E)</option> -->
+                  <option value="Any Digit">Any Digit</option>
+                  <!-- <option value="Custom Digit Set">Custom Digit Set (e.g, 1 3 5)</option> -->
+                  <option value="(">(</option>
+                  <option value=")">)</option>
+                  <option value="{">{</option>
+                  <option value="}">}</option>
+                  <option value="[">[</option>
+                  <option value="]">]</option>
+                  <option value="$">$</option>
+                  <option value="*">*</option>
+                  <option value="-">-</option>
+                  <option value="+">+</option>
+                  <option value="|">|</option>
+                  <option value=",">,</option>
+                  <option value=".">.</option>
+                  <option value="/">/</option>
+                  <!-- <option value='"'>"</option> -->
+                  <!-- <option value="'">'</option> -->
+                </select>
+                <label for="char">Select Character</label>
+              </div>
+            </div>
+            <br>
+            <div class="form-group">
+              <div class="form-floating">
+                <select class="form-select" id="count">
+                  <option value=""></option>
+                  <option value="Zero or More">Zero or More</option>
+                  <option value="One or More">One or More</option>
+                  <option value="1">Exactly 1</option>
+                  <option value="2">Exactly 2</option>
+                  <option value="3">Exactly 3</option>
+                  <option value="4">Exactly 4</option>
+                  <option value="5">Exactly 5</option>
+                  <option value="6">Exactly 6</option>
+                  <option value="7">Exactly 7</option>
+                  <option value="8">Exactly 8</option>
+                  <option value="9">Exactly 9</option>
+                  <option value="10">Exactly 10</option>
+                  <option value="Custom">Custom (e.g, Exactly 10 occurrences)</option>
+                </select>
+                <label for="count">Select Number of Repeats</label>
+              </div>
+            </div>
+            <br>
+            <div style="text-align:right;">
+              <button class="mb-2 btn btn-primary" type="button" id="add_char_btn" value="Add Character">Add Character</button>
+              <button class="mb-2 btn btn-primary" type="button" id="add_string_formats_btn" value="Add New String Format">Add New String Format</button>
+              <button class="mb-2 btn btn-primary" type="button" id="clear_string_formats_btn">Clear Formats</button>
+            </div>
+            <div id="char_alert"></div>
+          </div>
+        </div>
+      </form>
+
+      <!--- Devider --->
+      <br>
+      <div class="row">
+        <hr></hr>
+      </div>
+
+      <!---------------------------------------------------------------------->
+      <!---------- BOTTOM CONTAINER ------------------------------------------>
+      <!---------------------------------------------------------------------->
+      <div class="row g-5">
+        <div class="col-xs-12 col-lg-8">
+          <div class="row g-5">
+
+            <!--- Test Output --->
+            <div class="col-xs-12 col-lg-6">
+              <div class="row g-5">
+                <div class="col-xs-12 col-lg-6">
+                  <button class="mb-2 btn btn-primary" type="button" id="test_rule_btn" value="Test Rule">Test Rule</button>
+                  <button class="mb-2 btn btn-primary" type="button" id="clear_test_output_btn" value="Clear Output">Clear Output</button>
+                  <div class="form-floating">
+                    <input class="form-control" type="text" id="test_output" name="test_output" placeholder="Test Output" readonly="true" disabled="true" maxlength="64" size="10">
+                    <label for="test_output">Test Output</label>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-lg-6">
+                  <div id="test_parser_alert"></div>
+                </div>
+              </div>
+            </div>
+
+            <!--- Rule Buttons --->
+            <div class="col-xs-12 col-lg-6">
+              <div style="text-align:center">
+                <button class="mb-2 btn btn-primary" type="button" id="add_rule_btn" value="Add Rule">Add Rule</button>
+                <!-- <button class="mb-2 btn btn-primary" type="button" id="load_rule_btn" value="Load Rule">Load Rule</button> -->
+                <button class="mb-2 btn btn-warning" type="button" id="confirm_update_rule_btn" value="Update Rule">Update Rule</button>
+                <button class="mb-2 btn btn-danger" type="button" id="confirm_delete_rule_btn" value="Delete Rule">Delete Rule</button>
+              </div>
+              <div id="rule_manager_alert"></div>
+            </div>
+          </div>
+        </div>
+
+        <!--- Batch Parser --->
+        <div class="col-xs-12 col-lg-4">
+          <div style="text-align:right">
+            <button class="mb-2 btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#batch_parser_popup">Batch Parser</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br><br><br>
+
+    <!---------------------------------------------------------------------->
+    <!---------- POPUPS ---------------------------------------------------->
+    <!---------------------------------------------------------------------->
+    <!---------- Quick Instructions Popup ---------->
+    <div id="quick_ins_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Quick Instructions</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <ul style=“list-style-type:disc”>
+              <li>Upload a single PDF file and click the View Raw Content button to get an idea of how the PDF content are positioned.</li>
+              <li>Create an empty template using the Add or Edit Templates button.</li>
+              <li>In the main page choose the template you just created.</li>
+              <li>Add your first rule to the template.</li>
+              <li>Choose the rule you just created and test it using the Test Rule button.</li>
+              <li>If the test output is "NA", adjust and update your rule.</li>
+              <li>Continue to add as many rules as you like to your template.</li>
+              <li>Click the Batch Parser button to open the Batch Parser popup window.</li>
+              <li>Upload multiple PDF files.</li>
+              <li>Select your desired template and click the Submit for Processing button.</li>
+              <li>Wait for the process to complete.</li>
+              <li>Download the extracted PDF data as a CSV file.</li>
+              <li>Done!</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- RegEx Help Popup ---------->
+    <div id="regex_help_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">RegEx Help Tables</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <iframe src="regex_help.html" style="width:100%; height:500px"></iframe>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- PDF Content Viewer Popup ---------->
+    <div id="raw_content_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Raw PDF Content</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <textarea class="form-control" type="text" id="pdf_content" name="pdf_content" readonly="" style="resize:none; width:100%; height:300px;" disabled></textarea>
+            <br>
+            <div id="raw_content_alert"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- Template Manager Popup ---------->
+    <div id="template_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Add or Edit Templates</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="form-floating">
+                <input class="form-control" type="text" id="new_template_name" name="new_template_name" placeholder="Template Name" maxlength="64" size="15">
+                <label for="new_template_name">Template Name</label>
+              </div>
+              <br>
+              <button class="btn btn-primary" type="button" id="add_template_btn" value="Add Template">Add Template</button>
+              <br><br><br>
+              <div class="form-floating">
+                <select class="form-select" id="template_name_3" name="template_name_3">
+                  <option value=""></option>
+                </select>
+                <label for="template_name_3">Select a template</label>
+              </div>
+              <br>
+              <!-- <button class="mb-2 btn btn-primary" type="button" id="load_template_btn" value="Load Template">Load Template</button> -->
+              <button class="mb-2 btn btn-warning" type="button" id="confirm_update_template_btn" value="Update Template">Update Template</button>
+              <button class="mb-2 btn btn-danger" type="button" id="confirm_delete_template_btn" value="Delete Template">Delete Template</button>
+              <div id="template_manager_alert"></div>
+              <div id="database_alert_2"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- Batch Parser Popup ---------->
+    <div id="batch_parser_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Batch Parser</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row g-5">
+
+                <!--- Batch File Upload --->
+                <div class="col-xs-12 col-md-6">
+                  <div class="form-group">
+                    <input type="file" style="display:none" id="pdf_files" name="pdf_files" accept=".pdf" multiple="true" required="true">
+                    <label class="mb-2 btn btn-secondary" for="pdf_files">Choose PDF Files</label>
+                    <button class="mb-2 btn btn-primary" type="button" id="upload_btn" value="Upload">Upload</button>
+                    <br>
+                    <span>
+                      Selected Files:
+                      <span id="file_count">None</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!--- Batch Process PDF Files --->
+                <div class="col-xs-12 col-md-6">
+                  <div class="form-group">
+                    <div class="form-floating">
+                      <select class="form-select" id="template_name_2" name="template_name_2" list="template_options" placeholder="">
+                        <option value=""></option>
+                      </select>
+                      <label for="template_name_2">Select a template</label>
+                    </div>
+                    <br>
+                    <div class="form-floating">
+                      <input class="form-control" type="text" id="optional_id" name="optional_id" placeholder="Optional ID" maxlength="16" size="15">
+                      <label for="optional_id">Optional ID</label>
+                    </div>
+                    <br>
+                    <button class="mb-2 btn btn-primary" type="button" id="process_btn" value="Submit For Processing">Submit For Processing</button>
+                  </div>
+                </div>
+              </div>
+              <div id="batch_parser_alert"></div>
+              <div id="database_alert_3"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- About Popup ---------->
+    <div id="about_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">About</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            PDF or Portable Document Format files have become an important part of everyday life due to the ease of use and amazing portability they offer, 
+            and some of us deal with hundreds of these files on a daily basis. As easy as it is to work with PDF files, extracting any meaningful data from them, 
+            especially in large quantities, can be quite challenging and time consuming.
+            <br></br>
+            Batch PDF Parser is a web application than can help businesses as well as individuals save many hours of manual and error-prone data entry by allowing 
+            them to process multiple identical PDF files simultaneously and extract the data they need from them in a matter of seconds.
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- Contact Popup ---------->
+    <div id="contact_popup" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Contact Us</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            If you have any questions about this product please contact us at:
+            <a href="mailto:***">***</a>
+            <br></br>
+            Thank you for using Batch PDF Parser!
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------- Warning Popups ---------->
+    <div id="template_danger_popup" class="modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Confirm Action</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this template?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">No</button>
+            <button class="btn btn-danger" type="button" id="delete_template_btn">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="template_warning_popup" class="modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Confirm Action</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to overwrite this template?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">No</button>
+            <button class="btn btn-danger" type="button" id="update_template_btn">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rule_danger_popup" class="modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Confirm Action</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this rule?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">No</button>
+            <button class="btn btn-danger" type="button" id="delete_rule_btn">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rule_warning_popup" class="modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Confirm Action</h4>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to overwrite this rule?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">No</button>
+            <button class="btn btn-danger" type="button" id="update_rule_btn">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------------------------------------------------------------------->
+    <!---------- SCRIPTS --------------------------------------------------->
+    <!---------------------------------------------------------------------->
+    <script>
+      // $(document).ready(function(){
+        //---------- Local Alerts ---------->
+        var database_alert_1 = document.getElementById("database_alert_1");
+        var append_database_alert_1 = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
+          database_alert_1.append(wrapper);
+        });
+
+        var database_alert_1_2 = document.getElementById("database_alert_1_2");
+        var append_database_alert_1_2 = function(type, message){
+          var wrapper = document.createElement("div");
+          wrapper.innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
+          database_alert_1_2.append(wrapper);
+        }
+
+        var database_alert_2 = document.getElementById("database_alert_2");
+        var append_database_alert_2 = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
+          database_alert_2.append(wrapper);
+        });
+
+        var database_alert_3 = document.getElementById("database_alert_3");
+        var append_database_alert_3 = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
+          database_alert_3.append(wrapper);
+        });
+
+        var upload_alert = document.getElementById("upload_alert");
+        var append_upload_alert = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          upload_alert.append(wrapper);
+        });
+
+        var raw_content_alert = document.getElementById("raw_content_alert");
+        var append_raw_content_alert = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          raw_content_alert.append(wrapper);
+        });
+
+        var rule_manager_alert = document.getElementById("rule_manager_alert");
+        var append_rule_manager_alert = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          rule_manager_alert.append(wrapper);
+        });
+
+        var template_manager_alert = document.getElementById("template_manager_alert");
+        var append_template_manager_alert = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          template_manager_alert.append(wrapper);
+        });
+
+        var char_alert = document.getElementById("char_alert");
+        var append_char_alert = function(type, message){
+          var wrapper = document.createElement("div");
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          char_alert.append(wrapper);
+        }
+
+        var test_parser_alert = document.getElementById("test_parser_alert");
+        var append_test_parser_alert = function(type, message){
+          var wrapper = document.createElement("div");
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          test_parser_alert.append(wrapper);
+        }
+
+        var batch_parser_alert = document.getElementById("batch_parser_alert");
+        var append_batch_parser_alert = (function(type, message){
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+          batch_parser_alert.append(wrapper);
+        });
+
+        //---------- Frequently Used Elements ----------
+        var template_select_1 = document.getElementById("template_name_1");
+        var template_select_2 = document.getElementById("template_name_2");
+        var template_select_3 = document.getElementById("template_name_3");
+        var rule_select = document.getElementById("rule_name");
+        var char_select = document.getElementById("char");
+        var count_select = document.getElementById("count");
+        var string_occurrence_select = document.getElementById("string_occurrence");
+        var keyword_occurrence_select = document.getElementById("keyword_occurrence");
+        var location_select = document.getElementById("location");
+        template_warning_popup = new bootstrap.Modal(document.getElementById("template_warning_popup"));
+        template_danger_popup = new bootstrap.Modal(document.getElementById("template_danger_popup"));
+        rule_warning_popup = new bootstrap.Modal(document.getElementById("rule_warning_popup"));
+        rule_danger_popup = new bootstrap.Modal(document.getElementById("rule_danger_popup"));
+
+        //---------- Pre-load Functions ----------
+        function get_template_list(){
+          $.ajax({
+            url: 'intermediate.py?destination=get_template_list',
+            type: 'POST',
+            data: '',
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              var response = JSON.parse(json_response);
+              var error_message = response['error_message'];
+              var success_message = response['success_message'];
+              var template_list = response['template_list'];
+              if(error_message != ''){
+                database_alert_1.innerHTML = "";
+                database_alert_2.innerHTML = "";
+                database_alert_3.innerHTML = "";
+                append_database_alert_1("danger", error_message);
+                append_database_alert_2("danger", error_message);
+                append_database_alert_3("danger", error_message);
+              }
+              else{
+                if(template_select_1.options.length > 1){
+                  for(i0 = template_select_1.options.length - 1; i0 > 0; i0--){
+                    template_select_1.remove(i0);
+                    template_select_2.remove(i0);
+                    template_select_3.remove(i0);
+                  }
+                }
+                for(i1 = 0; i1 < template_list.length; i1++){
+                  var option_1 = document.createElement("option");
+                  var option_2 = document.createElement("option");
+                  var option_3 = document.createElement("option");
+                  option_1.text = template_list[i1];
+                  option_1.value = template_list[i1];
+                  option_2.text = template_list[i1];
+                  option_2.value = template_list[i1];
+                  option_3.text = template_list[i1];
+                  option_3.value = template_list[i1];
+                  template_select_1.append(option_1);
+                  template_select_2.append(option_2);
+                  template_select_3.append(option_3);
+                }
+              }
+            }
+          })
+        }
+
+        function get_rule_list(){
+          var rule_list_label = document.getElementById("rule_list_label");
+          rule_list_label.innerHTML = "Fetching...";
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var form_data = new FormData();
+          form_data.append("template_name", template_name_1);
+          $.ajax({
+            url: 'intermediate.py?destination=get_rule_list',
+            type: 'POST',
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              var response = JSON.parse(json_response);
+              var error_message = response['error_message'];
+              var success_message = response['success_message'];
+              var rule_list = response['rule_list'];
+              if(error_message != ''){
+                database_alert_1.innerHTML = "";
+                append_database_alert_1("danger", error_message);
+              }
+              else{
+                database_alert_1.innerHTML = "";
+                if(rule_select.options.length > 1){
+                  for(i2 = rule_select.options.length - 1; i2 > 0; i2--){
+                    rule_select.remove(i2);
+                  }
+                }
+                for(i3 = 0; i3 < rule_list.length; i3++){
+                  var option = document.createElement("option");
+                  option.text = rule_list[i3];
+                  option.value = rule_list[i3];
+                  rule_select.append(option);
+                }
+                // rule_select.selectedIndex = 1;
+                rule_list_label.innerHTML = "Select a rule";
+              }
+            }
+          })
+        }
+
+        var toggle_keyword_field = function(){
+          keyword = document.getElementById("keyword");
+          if(location_select.value == "1" || location_select.value == "2"){
+            keyword.readOnly = false;
+            $("#keyword_occurrence").attr('disabled', false);
+          }
+          else{
+            keyword.value = "";
+            keyword.readOnly = true;
+            keyword_occurrence_select.options[0].selected = true;
+            $("#keyword_occurrence").attr('disabled', true);
+          }
+        }
+
+        //---------- Execute Pre-load Functions ----------
+        get_template_list();
+
+        //---------- Event Listeners ----------
+        template_select_3.addEventListener("change", function(){
+          load_template();
+        });
+
+        template_select_1.addEventListener("change", function(){
+          get_rule_list();
+        })
+
+        location_select.addEventListener("change", function(){
+          toggle_keyword_field()
+        });
+
+        rule_select.addEventListener("change", function(){
+          load_rule();
+        });
+
+        var pdf_files = document.getElementById("single_pdf_file");
+        var pdf_name = document.getElementById("pdf_name");
+        pdf_files.addEventListener("change", function(event)
+        {
+          var file_name = event.target.files[0].name;
+          pdf_name.textContent = file_name;
+        })
+
+        var pdf_files = document.getElementById("pdf_files");
+        var file_count = document.getElementById("file_count");
+        pdf_files.addEventListener("change", function(event){
+          file_count.textContent = event.target.files.length;
+        })
+
+        //---------- Post-load Functions ----------
+        //--- Sample File Upload ---
+        $("#sample_upload_btn").click(function(){
+          var pdf_files = document.getElementById("single_pdf_file").files;
+          if(pdf_files.length == 0){
+            upload_alert.innerHTML = "";
+            append_upload_alert("danger", "Select a PDF file to upload.");
+          }
+          else{
+            var form_data = new FormData();
+            form_data.append("pdf_files[]", pdf_files[0]);
+            $.ajax({
+              url: 'intermediate.py?destination=upload',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                if(error_message != ""){
+                  upload_alert.innerHTML = "";
+                  append_upload_alert("danger", error_message);
+                }
+                else{
+                  upload_alert.innerHTML = "";
+                  append_upload_alert("success", success_message);
+                }
+              }
+            });
+          }
+        });
+
+        //--- Batch File Upload ---
+        $("#upload_btn").click(function(){
+          var pdf_files = document.getElementById('pdf_files').files;
+          if(pdf_files.length == 0){
+            batch_parser_alert.innerHTML = "";
+            append_batch_parser_alert("danger", "Select PDF files to upload.");
+          }
+          else{
+            var upload_btn = document.getElementById("upload_btn");
+            upload_btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span><span> Uploading...</span>';
+            var form_data = new FormData();
+            for(var i4 = 0; i4 < pdf_files.length; i4++){
+              form_data.append("pdf_files[]", pdf_files[i4]);
+            }
+            $.ajax({
+              url: 'intermediate.py?destination=upload',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                if(error_message != ""){
+                  batch_parser_alert.innerHTML = "";
+                  append_batch_parser_alert("danger", error_message);
+                }
+                else{
+                  batch_parser_alert.innerHTML = "";
+                  append_batch_parser_alert("success", success_message);
+                }
+                upload_btn.innerHTML = "Upload";
+              }
+            });
+          }
+        });
+
+        //--- Get PDF File Content ---
+        $('#get_pdf_content_btn').click(function(){
+          $.ajax({
+            url: 'intermediate.py?destination=get_pdf_content',
+            success: function(json_response){
+              response = JSON.parse(json_response);
+              error_message = response["error_message"];
+              success_message = response["success_message"];
+              pdf_data = response["pdf_data"];
+              if(error_message != ''){
+                document.getElementById("pdf_content").value = "";
+                raw_content_alert.innerHTML = "";
+                append_raw_content_alert("danger", error_message);
+              }
+              else{
+                raw_content_alert.innerHTML = "";
+                document.getElementById("pdf_content").value = pdf_data["pdf_content"];
+              }
+            }
+          })
+        });
+
+        //--- Add Template ---
+        $('#add_template_btn').click(function(){
+          var new_template_name = document.getElementById("new_template_name").value;
+          if(new_template_name == ""){
+            template_manager_alert.innerHTML = "";
+            append_template_manager_alert("danger", "Template name is required.");
+          }
+          else{
+            var form_data = new FormData();
+            form_data.append("template_name", new_template_name);
+            $.ajax({
+              url: 'intermediate.py?destination=add_template',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                if(error_message != ""){
+                  template_manager_alert.innerHTML = "";
+                  append_template_manager_alert("danger", error_message);
+                }
+                else{
+                  template_manager_alert.innerHTML = "";
+                  append_template_manager_alert("success", success_message);
+                  get_template_list();
+                }
+              }
+            })
+          }
+        });
+
+        //--- Load Template ---
+        var load_template = function(){
+        // $('#load_template_btn').click(function(){
+          var template_name_3 = document.getElementById("template_name_3").value;
+          if(template_name_3 == ""){
+            // template_manager_alert.innerHTML = "";
+            // append_template_manager_alert("danger", "No template selected.");
+            document.getElementById("new_template_name").value = "";
+            var email_client_form = new FormData(document.getElementById("email_client_form"));
+            email_client_form.forEach((value, key) => (document.getElementById(key).value = ""));
+            document.getElementById("date_format").value = "";
+            vendor_select.options[0].selected = true;
+          }
+          else{
+            var form_data = new FormData();
+            form_data.append("template_name", template_name_3);
+            $.ajax({
+              url: 'intermediate.py?destination=load_template',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                template = response["template"];
+                if(error_message != ''){
+                  template_manager_alert.innerHTML = "";
+                  append_template_manager_alert("danger", error_message);
+                }
+                else{
+                  template_manager_alert.innerHTML = "";
+                  document.getElementById("new_template_name").value = template["template_name"];
+                }
+              }
+            })
+          }
+        };
+
+        //--- Update Template ---
+        $('#confirm_update_template_btn').click(function(){
+          var template_name_3 = document.getElementById("template_name_3").value;
+          var new_template_name = document.getElementById("new_template_name").value;
+          if (template_name_3 == ""){
+            template_manager_alert.innerHTML = "";
+            append_template_manager_alert("danger", "No template selected.");
+          }
+          else if (new_template_name == ""){
+            template_manager_alert.innerHTML = "";
+            append_template_manager_alert("danger", "Template Name is required.");
+          }
+          else{
+            template_warning_popup.show();
+          }
+        });
+
+        $('#update_template_btn').click(function(){
+          template_warning_popup.hide();
+          var new_template_name = document.getElementById("new_template_name").value;
+          var template_name_3 = document.getElementById("template_name_3").value;
+          var form_data = new FormData();
+          form_data.append("new_template_name", new_template_name);
+          form_data.append("template_name", template_name_3);
+          $.ajax({
+            url: 'intermediate.py?destination=update_template',
+            type: 'POST',
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              response = JSON.parse(json_response);
+              error_message = response["error_message"];
+              success_message = response["success_message"];
+              if(error_message != ""){
+                template_manager_alert.innerHTML = "";
+                append_template_manager_alert("danger", error_message);
+              }
+              else{
+                template_manager_alert.innerHTML = "";
+                append_template_manager_alert("success", success_message);
+                get_template_list();
+              }
+            }
+          })
+        });
+
+        //--- Delete Template ---
+        $('#confirm_delete_template_btn').click(function(){
+          var template_name_3 = document.getElementById("template_name_3").value;
+          if (template_name_3 == ""){
+            template_manager_alert.innerHTML = "";
+            append_template_manager_alert("danger", "No template selected.");
+          }
+          else{
+            template_danger_popup.show();
+          }
+        });
+        
+        $('#delete_template_btn').click(function(){
+          template_danger_popup.hide();
+          var template_name_3 = document.getElementById("template_name_3").value;
+          var form_data = new FormData();
+          form_data.append("template_name", template_name_3);
+          $.ajax({
+            url: 'intermediate.py?destination=delete_template',
+            type: 'POST',
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              response = JSON.parse(json_response);
+              error_message = response["error_message"];
+              success_message = response["success_message"];
+              if(error_message != ""){
+                template_manager_alert.innerHTML = "";
+                append_template_manager_alert("danger", error_message);
+              }
+              else{
+                template_manager_alert.innerHTML = "";
+                append_template_manager_alert("success", success_message);
+                get_template_list();
+              }
+            }
+          })
+        });
+
+        //--- Add Rule ---
+        $('#add_rule_btn').click(function(){
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var new_rule_name = document.getElementById("new_rule_name").value;
+          var csv_column_name = document.getElementById("csv_column_name").value;
+          var location = document.getElementById("location").value;
+          var keyword = document.getElementById("keyword").value;
+          var string_occurrence = document.getElementById("string_occurrence").value;
+          var keyword_occurrence = document.getElementById("keyword_occurrence").value;
+          var string_formats = document.getElementById("string_formats").value;
+          if(template_name_1 == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "No template selected.");
+          }
+          else if(new_rule_name == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Rule Name is required.");
+          }
+          else if(csv_column_name == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "CSV Column Name is required.");
+          }
+          else if(location == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Location is required.");
+          }
+          else if((location == "1" || location == "2") && keyword == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Keyword is required.");
+          }
+          else if((location == "1" || location == "2") && keyword_occurrence == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Keyword Occurrence is required.");
+          }
+          else if(string_occurrence == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "String Occurrence is required.");
+          }
+          else if(string_formats == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "String Formats are required.");
+          }
+          else{
+            var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+            var form_data = new FormData();
+            form_data.append("template_name", template_name_1);
+            if(location == "0"){
+              form_data.append("keyword_occurrence", "");
+            }
+            parsing_rules_form.forEach((value, key) => (form_data.append(key, value)));
+            $.ajax({
+              url: 'intermediate.py?destination=add_rule',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                if(error_message != ""){
+                  rule_manager_alert.innerHTML = "";
+                  append_rule_manager_alert("danger", error_message);
+                }
+                else{
+                  rule_manager_alert.innerHTML = "";
+                  append_rule_manager_alert("success", success_message);
+                  get_rule_list();
+                  var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+                  parsing_rules_form.forEach((value, key) => {
+                    document.getElementById(key).value = "";
+                  });
+                  string_occurrence_select.options[0].selected = true;
+                  keyword_occurrence_select.options[0].selected = true;
+                  location_select.options[0].selected = true;
+                  document.getElementById("keyword").readOnly = true;
+                  $("#keyword_occurrence").attr('disabled', true);
+                }
+              }
+            })
+          }
+        });
+
+        //--- Load Rule ---
+        var load_rule = function(){
+        // $('#load_rule_btn').click(function(){
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var rule_name = document.getElementById("rule_name").value;
+          // if(template_name_1 == ""){
+          //   rule_manager_alert.innerHTML = "";
+          //   append_rule_manager_alert("danger", "No template selected.");
+          // }
+          if(rule_name == ""){
+            // rule_manager_alert.innerHTML = "";
+            // append_rule_manager_alert("danger", "No rule selected.");
+            var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+            parsing_rules_form.forEach((value, key) => {
+              document.getElementById(key).value = "";
+            });
+            string_occurrence_select.options[0].selected = true;
+            keyword_occurrence_select.options[0].selected = true;
+            location_select.options[0].selected = true;
+            document.getElementById("keyword").readOnly = true;
+            $("#keyword_occurrence").attr('disabled', true);
+          }
+          else{
+            var form_data = new FormData();
+            form_data.append("template_name", template_name_1);
+            form_data.append("rule_name", rule_name);
+            $.ajax({
+              url: 'intermediate.py?destination=load_rule',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                var response = JSON.parse(json_response);
+                var error_message = response['error_message'];
+                var success_message = response['success_message'];
+                var rule = response['rule'];
+                if(error_message != ''){
+                  rule_manager_alert.innerHTML = "";
+                  append_rule_manager_alert("danger", error_message);
+                }
+                else{
+                  rule_manager_alert.innerHTML = "";
+                  var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+                  parsing_rules_form.forEach((value, key) => {
+                    if(key == "new_rule_name"){
+                      document.getElementById(key).value = rule["rule_name"];
+                    }
+                    else{
+                      document.getElementById(key).value = rule[key];
+                    }
+                  });
+                  for(var i5 = 0; i5 <= location_select.options.length; i5++){
+                    if(location_select.options[i5].value == rule["location"]){
+                      location_select.options[i5].selected = true;
+                      if(rule["location"] == "1" || rule["location"] == "2"){
+                        document.getElementById("keyword").readOnly = false;
+                      }
+                      else{
+                        document.getElementById("keyword").readOnly = true;
+                      }
+                      break;
+                    }
+                  }
+                  for(var i6 = 0; i6 <= keyword_occurrence_select.options.length; i6++){  // use different counter
+                    if(keyword_occurrence_select.options[i6].value == rule["keyword_occurrence"]){
+                      keyword_occurrence_select.options[i6].selected = true;
+                      if(rule["location"] == "1" || rule["location"] == "2"){
+                        $("#keyword_occurrence").attr('disabled', false);
+                      }
+                      else{
+                        $("#keyword_occurrence").attr('disabled', true);
+                      }
+                      break;
+                    }
+                  }
+                  for(var i7 = 0; i7 <= string_occurrence_select.options.length; i7++){
+                    if(string_occurrence_select.options[i7].value == rule["string_occurrence"]){
+                      string_occurrence_select.options[i7].selected = true;
+                      break;
+                    }
+                  }
+                }
+              }
+            })
+          }
+        };
+
+        //--- Update Rule ---
+        $('#confirm_update_rule_btn').click(function(){
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var rule_name = document.getElementById("rule_name").value;
+          var new_rule_name = document.getElementById("new_rule_name").value;
+          var csv_column_name = document.getElementById("csv_column_name").value;
+          var location = document.getElementById("location").value;
+          var keyword = document.getElementById("keyword").value;
+          var string_occurrence = document.getElementById("string_occurrence").value;
+          var keyword_occurrence = document.getElementById("keyword_occurrence").value;
+          var string_formats = document.getElementById("string_formats").value;
+          if (template_name_1 == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "No template selected.");
+          }
+          else if (rule_name == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "No rule selected.");
+          }
+          else if(new_rule_name == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Rule Name is required.");
+          }
+          else if(csv_column_name == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "CSV Column Name is required.");
+          }
+          else if(location == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Location is required.");
+          }
+          else if((location == "1" || location == "2") && keyword == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Keyword is required.");
+          }
+          else if((location == "1" || location == "2") && keyword_occurrence == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "Keyword Occurrence is required.");
+          }
+          else if(string_occurrence == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "String Occurrence is required.");
+          }
+          else if(string_formats == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "String Format 1 is required.");
+          }
+          else{
+            rule_warning_popup.show();
+          }
+        });
+
+        $('#update_rule_btn').click(function(){
+          rule_warning_popup.hide();
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var rule_name = document.getElementById("rule_name").value;
+          var location = document.getElementById("location").value;
+          var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+          var form_data = new FormData();
+          form_data.append("template_name", template_name_1);
+          form_data.append("rule_name", rule_name);
+          if(location == "0"){
+            form_data.append("keyword_occurrence", "");
+          }
+          parsing_rules_form.forEach((value, key) => (form_data.append(key, value)));
+          $.ajax({
+            url: 'intermediate.py?destination=update_rule',
+            type: 'POST',
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              var response = JSON.parse(json_response);
+              var error_message = response['error_message'];
+              var success_message = response['success_message'];
+              if(error_message != ""){
+                rule_manager_alert.innerHTML = "";
+                append_rule_manager_alert("danger", error_message);
+              }
+              else{
+                rule_manager_alert.innerHTML = "";
+                append_rule_manager_alert("success", success_message);
+                get_rule_list();
+                var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+                parsing_rules_form.forEach((value, key) => {
+                  document.getElementById(key).value = "";
+                });
+                string_occurrence_select.options[0].selected = true;
+                keyword_occurrence_select.options[0].selected = true;
+                location_select.options[0].selected = true;
+                document.getElementById("keyword").readOnly = true;
+                $("#keyword_occurrence").attr('disabled', true);
+              }
+            }
+          })
+        });
+
+        //--- Delete Rule ---
+        $('#confirm_delete_rule_btn').click(function(){
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var rule_name = document.getElementById("rule_name").value;
+          if (template_name_1 == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "No template selected.");
+          }
+          else if (rule_name == ""){
+            rule_manager_alert.innerHTML = "";
+            append_rule_manager_alert("danger", "No rule selected.");
+          }
+          else{
+            rule_danger_popup.show();
+          }
+        });
+
+        $('#delete_rule_btn').click(function(){
+          rule_danger_popup.hide();
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var rule_name = document.getElementById("rule_name").value;
+          var form_data = new FormData();
+          form_data.append("template_name", template_name_1);
+          form_data.append("rule_name", rule_name);
+          $.ajax({
+            url: 'intermediate.py?destination=delete_rule',
+            type: 'POST',
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              var response = JSON.parse(json_response);
+              var error_message = response['error_message'];
+              var success_message = response['success_message'];
+              rule_manager_alert.innerHTML = "";
+              if(error_message != ""){
+                rule_manager_alert.innerHTML = "";
+                append_rule_manager_alert("danger", error_message);
+              }
+              else{
+                rule_manager_alert.innerHTML = "";
+                append_rule_manager_alert("success", success_message);
+                get_rule_list();
+                var parsing_rules_form = new FormData(document.getElementById("parsing_rules_form"));
+                parsing_rules_form.forEach((value, key) => {
+                  document.getElementById(key).value = "";
+                });
+                string_occurrence_select.options[0].selected = true;
+                keyword_occurrence_select.options[0].selected = true;
+                location_select.options[0].selected = true;
+                document.getElementById("keyword").readOnly = true;
+                $("#keyword_occurrence").attr('disabled', true);
+              }
+            }
+          })
+        });
+
+        //--- Create String Format ---
+        $('#add_char_btn').click(function(){
+          var string_formats = document.getElementById("string_formats").value;
+          var char = "";
+          var count = "";
+          switch(char_select.value){
+            case "Custom Phrase":
+              char = "Annual Sample";
+              break;
+            case "Any Character":
+              char = ".";
+              break;
+            case "Any Letter":
+              char = "[a-zA-Z]";
+              break;
+            case "Any Upper Case Letter":
+              char = "[A-Z]";
+              break;
+            case "Any Lower Case Letter":
+              char = "[a-z]";
+              break;
+            // case "Custom Letter Set":
+            //   char = "[A c E]";
+            //   break;
+            case "Any Digit":
+              char = "[0-9]";
+              break;
+            // case "Custom Digit Set":
+            //   char = "[1 3 5]";
+            //   break;
+            case "(":
+              char = "[(]";
+              break;
+            case ")":
+              char = "[)]";
+              break;
+            case "{":
+              char = "[{]";
+              break;
+            case "}":
+              char = "[}]";
+              break;
+            case "[":
+              char = "\\[";
+              break;
+            case "]":
+              char = "\\]";
+              break;
+            case "$":
+              char = "[$]"; // or \\$
+              break;
+            case "*":
+              char = "[*]"; // or \\*
+              break;
+            case "+":
+              char = "[+]"; // or \\+
+              break;
+            case "|":
+              char = "[|]"; // or \\|
+              break;
+            case ".":
+              char = "[.]"; // or \\.
+              break;
+            // case '"':
+            //   char += '["]'; // or \\"
+            //   break;
+            // case "'":
+            //   char += "[']"; // or \\'
+            //   break;
+            default:
+              char = char_select.value;
+          }
+          switch(count_select.value){
+            case "Zero or More":
+              count = "*";
+              break;
+            case "One or More":
+              count = "+";
+              break;
+            case "1":
+              count = "";
+              break;
+            case "Custom":
+              count = "{10}";
+              break;
+            default:
+              count = "{" + count_select.value + "}";
+          }
+          if(char == ""){
+            char_alert.innerHTML = "";
+            append_char_alert("danger", "No character selected.");
+          }
+          else if(count == "{}"){
+            char_alert.innerHTML = "";
+            append_char_alert("danger", "Number of character occurrences is required.");
+          }
+          else{
+            char_alert.innerHTML = "";
+            string_formats += char + count;
+            document.getElementById("string_formats").value = string_formats;
+            char_select.options[0].selected = true;
+            count_select.options[0].selected = true;
+          }
+        });
+
+        $('#add_string_formats_btn').click(function(){
+          var string_formats = document.getElementById("string_formats").value;
+          if(string_formats == ""){
+            char_alert.innerHTML = "";
+            append_char_alert("danger", "Add at least one character to the first String Format.");
+          }
+          else{
+            char_alert.innerHTML = "";
+            string_formats += "|";
+            document.getElementById("string_formats").value = string_formats;
+            char_select.options[0].selected = true;
+            count_select.options[0].selected = true;
+          }
+        });
+
+        $('#clear_string_formats_btn').click(function(){
+          document.getElementById("string_formats").value = "";
+        });
+
+        //--- Test Rule ---
+        $('#test_rule_btn').click(function(){
+          var template_name_1 = document.getElementById("template_name_1").value;
+          var rule_name = document.getElementById("rule_name").value;
+          if(template_name_1 == ""){
+            test_parser_alert.innerHTML = "";
+            append_test_parser_alert("danger", "No template selected.");
+          }
+          else if(rule_name == ""){
+            test_parser_alert.innerHTML = "";
+            append_test_parser_alert("danger", "No rule selected.");
+          }
+          else{
+            var test_rule_btn = document.getElementById("test_rule_btn");
+            test_rule_btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span><span> Processing...</span>';
+            var form_data = new FormData();
+            form_data.append("template_name", template_name_1);
+            form_data.append("rule_name", rule_name);
+            $.ajax({
+              url: 'intermediate.py?destination=test_parser',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                pdf_data = response["pdf_data"];
+                if(error_message != ''){
+                  test_parser_alert.innerHTML = "";
+                  append_test_parser_alert("danger", error_message);
+                }
+                else{
+                  test_parser_alert.innerHTML = "";
+                  document.getElementById("test_output").value = pdf_data[rule_name][1];
+                }
+                test_rule_btn.innerHTML = "Test Rule";
+              }
+            })
+          }
+        });
+
+        $('#clear_test_output_btn').click(function(){
+          document.getElementById("test_output").value = "";
+        });
+
+        //--- Batch Process PDF Files ---
+        $('#process_btn').click(function(){
+          var template_name_2 = document.getElementById("template_name_2").value;
+          if(template_name_2 == ""){
+            batch_parser_alert.innerHTML = "";
+            append_batch_parser_alert("danger", "No template selected.");
+          }
+          else{
+            var process_btn = document.getElementById("process_btn");
+            process_btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span><span> Processing...</span>';
+            var optional_id = document.getElementById("optional_id").value;
+            var form_data = new FormData();
+            form_data.append("template_name", template_name_2);
+            form_data.append("optional_id", optional_id);
+            $.ajax({
+              url: 'intermediate.py?destination=batch_parser',
+              type: 'POST',
+              data: form_data,
+              contentType: false,
+              processData: false,
+              success: function(json_response){
+                response = JSON.parse(json_response);
+                error_message = response["error_message"];
+                success_message = response["success_message"];
+                download_url = response["download_url"];
+                if(error_message != ""){
+                  batch_parser_alert.innerHTML = "";
+                  append_batch_parser_alert("danger", error_message);
+                }
+                else{
+                  batch_parser_alert.innerHTML = "";
+                  append_batch_parser_alert("success", success_message + " <a target='_blank' href=" + download_url + ">Download PDF Data</a>");
+                }
+                process_btn.innerHTML = "Submit For Processing";
+              }
+            })
+          }
+        });
+
+        //--- Log Out ---
+        $('#logout').click(function(){
+          $.ajax({
+            url: 'intermediate.py?destination=logout',
+            type: 'POST',
+            data: '',
+            contentType: false,
+            processData: false,
+            success: function(json_response){
+              response = JSON.parse(json_response);
+              error_message = response["error_message"];
+              success_message = response["success_message"];
+              redirect_url = response["redirect_url"];
+              if(error_message != ""){
+                alert(error_message);
+              }
+              else{
+                window.location.replace(redirect_url);
+              }
+            }
+          })
+        });
+      // });
+    </script>
+  </body>
+
+  <footer class="text-center text-light bg-primary p-3">
+    &#0169 2024 Integrated Performance Consultants, Inc. All rights reserved.
+    <!-- <br> -->
+    <!-- Dedicated to S. M. T. &#x2661 --> <!-- &#x1F394 -->
+  </footer>
+</html>
