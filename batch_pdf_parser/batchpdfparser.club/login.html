@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <title>Batch PDF Parser</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"></link>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <!---------------------------------------------------------------------->
+        <!---------- NAVIGATION BAR -------------------------------------------->
+        <!---------------------------------------------------------------------->
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand mb-0 h1" href="index.html">
+                    <img src="assets/brand/data_1.png" width="35" height="35">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar_munu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar_munu">
+                    <div class="navbar-nav">
+                        <div class="nav-item">
+                            <a class="nav-link disabled" href="#" data-bs-toggle="modal" data-bs-target="#about_popup">About</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link disabled" href="#" data-bs-toggle="modal" data-bs-target="#contact_popup">Contact Us</a>
+                        </div>
+                        <!-- <div class="nav-item">
+                            <a class="nav-link disabled" href="#" data-bs-toggle="modal" data-bs-target="#">Login</a>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!---------------------------------------------------------------------->
+        <!---------- MAIN CONTAINER -------------------------------------------->
+        <!---------------------------------------------------------------------->
+        <div class="container-fluid" style="width:95%">
+            <!---------- Title ---------->
+            <br>
+            <div class="row" style="text-align:center">
+                <h3 style="color:gray">BATCH PDF PARSER</h3>
+            </div>
+            <br><br>
+
+            <!---------- Login Form ---------->
+            <div class="row g-5">
+                <div class="col-xs-12 col-lg-4">
+                </div>
+                <div class="col-xs-12 col-lg-4">
+                    <div style="text-align:center;">
+                        <h4 style="color:gray">Login</h4>
+                    </div>
+                    <br>
+                    <div class="form-floating">
+                        <input class="form-control" id="username" placeholder="User Name" maxlengtdh="64" size="10">
+                        <label for="username">User Name</label>
+                    </div>
+                    <br>
+                    <div class="form-floating">
+                        <input class="form-control" id="password" placeholder="Password" maxlengtdh="64" size="10">
+                        <label for="password">Password</label>
+                    </div>
+                    <br>
+                    <button class="btn btn-primary" style="margin-bottom:10px;" type="button" id="login_btn">Login</button>
+                    <div id="login_alert"></div>
+                </div>
+                <div class="col-xs-12 col-lg-4">
+                </div>
+            </div>
+        </div>
+
+        <!---------------------------------------------------------------------->
+        <!---------- SCRIPTS --------------------------------------------------->
+        <!---------------------------------------------------------------------->
+        <script>
+            $(document).ready(function(){
+                var login_alert = document.getElementById("login_alert");
+                var append_login_alert = (function(type, message){
+                    var wrapper = document.createElement('div');
+                    wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible">' + message + '<button class="btn-close" type="button" data-bs-dismiss="alert"></button></div>';
+                    login_alert.append(wrapper);
+                });
+
+                $('#login_btn').click(function(){
+                    username = document.getElementById("username").value;
+                    password = document.getElementById("password").value;
+                    $.ajax({
+                        url: "intermediate.py?destination=login",
+                        type: "POST",
+                        data: {"username" : username, "password" : password},
+                        // contentType: false,
+                        // processData: false,
+                        success: function(json_response){
+                            response = JSON.parse(json_response);
+                            error_message = response["error_message"];
+                            success_message = response["success_message"];
+                            // session_id = response["session_id"];
+                            redirect_url = response["redirect_url"];
+                            if(error_message != ''){
+                                login_alert.innerHTML = "";
+                                append_login_alert("danger", error_message);
+                            }
+                            else{
+                                // document.cookie = "session_id = " + session_id + "; max-age=30; ; path='/';";   // domain='***'; JS cookies are different than HTTP header cookies
+                                // alert(document.cookie);
+                                window.location.replace(redirect_url);
+                                // window.location.href = redirect_url;
+                            }
+                        }
+                    })
+                })
+            });
+        </script>
+    </body>
+</html>

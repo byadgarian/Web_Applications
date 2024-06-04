@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+        <script>
+            // $(document).ready(function(){
+                // var c = document.cookie;
+                $.ajax({
+                    url: "intermediate.py?destination=redirect",
+                    type: "POST",
+                    // data: c,
+                    success: function(json_response){
+                        response = JSON.parse(json_response);
+                        index_file_content = response['index_file_content'];
+                        redirect_url = response['redirect_url'];
+                        if(redirect_url == ''){
+                            document.write(index_file_content);
+                        }
+                        else{
+                            window.location.replace(redirect_url);
+                        }
+                    }
+                })
+            // });
+        </script>
+    </head>
+
+    <body>
+        <!-- No Content -->
+        <!-- For UI Content Protection Only -->
+    </body>
+</html>
